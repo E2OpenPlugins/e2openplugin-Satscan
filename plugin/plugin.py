@@ -383,6 +383,13 @@ class Satscan(ConfigListScreen, Screen):
 		if self.scan_fta.value:
 			flags |= eComponentScan.scanOnlyFree
 
+		print "*** scanning transponders:"
+
+		for transponder in self.enigma_transponders:
+			print "-->", transponder.orbital_position, transponder.polarisation, transponder.frequency, \
+					transponder.symbol_rate, transponder.system, transponder.inversion, transponder.pilot, transponder.pilot, \
+					transponder.fec, transponder.modulation, transponder.rolloff
+
 		self.session.open(ServiceScan, [{"transponders": self.enigma_transponders, "feid": int(self.select_nim.value), "flags": flags}])
 
 class SatscanStatus(Screen):
@@ -452,7 +459,6 @@ class SatscanStatus(Screen):
 		parent.app_container.execute(cmd)
 
 	def StatusAppContainerDataAvail(self, str):
-		transponder = eDVBFrontendParametersSatellite()
 
 		enigma_system = {
 			"DVB-S":	eDVBFrontendParametersSatellite.System_DVB_S,
@@ -460,38 +466,38 @@ class SatscanStatus(Screen):
 		}
 
 		enigma_modulation = {
-			"QPSK":	transponder.Modulation_QPSK,
-			"8PSK":	transponder.Modulation_8PSK
+			"QPSK":	eDVBFrontendParametersSatellite.Modulation_QPSK,
+			"8PSK":	eDVBFrontendParametersSatellite.Modulation_8PSK
 		}
 
 		enigma_inversion =	{
-			"INVERSION_OFF":	transponder.Inversion_Off,
-			"INVERSION_ON":		transponder.Inversion_On,
-			"INVERSION_AUTO":	transponder.Inversion_Unknown
+			"INVERSION_OFF":	eDVBFrontendParametersSatellite.Inversion_Off,
+			"INVERSION_ON":		eDVBFrontendParametersSatellite.Inversion_On,
+			"INVERSION_AUTO":	eDVBFrontendParametersSatellite.Inversion_Unknown
 		}
 
 		enigma_fec = {
-			"FEC_AUTO":	transponder.FEC_Auto,
-			"FEC_1_2":	transponder.FEC_1_2,
-			"FEC_2_3":	transponder.FEC_2_3,
-			"FEC_3_4":	transponder.FEC_3_4,
-			"FEC_5_6":	transponder.FEC_5_6,
-			"FEC_7_8":	transponder.FEC_7_8,
-			"FEC_8_9":	transponder.FEC_8_9,
-			"FEC_3_5":	transponder.FEC_3_5,
-			"FEC_9_10":	transponder.FEC_9_10,
-			"FEC_NONE":	transponder.FEC_None
+			"FEC_AUTO":	eDVBFrontendParametersSatellite.FEC_Auto,
+			"FEC_1_2":	eDVBFrontendParametersSatellite.FEC_1_2,
+			"FEC_2_3":	eDVBFrontendParametersSatellite.FEC_2_3,
+			"FEC_3_4":	eDVBFrontendParametersSatellite.FEC_3_4,
+			"FEC_5_6":	eDVBFrontendParametersSatellite.FEC_5_6,
+			"FEC_7_8":	eDVBFrontendParametersSatellite.FEC_7_8,
+			"FEC_8_9":	eDVBFrontendParametersSatellite.FEC_8_9,
+			"FEC_3_5":	eDVBFrontendParametersSatellite.FEC_3_5,
+			"FEC_9_10":	eDVBFrontendParametersSatellite.FEC_9_10,
+			"FEC_NONE":	eDVBFrontendParametersSatellite.FEC_None
 		}
 
 		enigma_rollof = {
-			"ROLLOFF_20":	transponder.RollOff_alpha_0_20,
-			"ROLLOFF_25":	transponder.RollOff_alpha_0_25,
-			"ROLLOFF_35":	transponder.RollOff_alpha_0_35
+			"ROLLOFF_20":	eDVBFrontendParametersSatellite.RollOff_alpha_0_20,
+			"ROLLOFF_25":	eDVBFrontendParametersSatellite.RollOff_alpha_0_25,
+			"ROLLOFF_35":	eDVBFrontendParametersSatellite.RollOff_alpha_0_35
 		}
 
 		enigma_pilot = {
-			"PILOT_ON":		transponder.Pilot_On,
-			"PILOT_OFF":	transponder.Pilot_Off
+			"PILOT_ON":		eDVBFrontendParametersSatellite.Pilot_On,
+			"PILOT_OFF":	eDVBFrontendParametersSatellite.Pilot_Off
 		}
 
 		parent = self.parent
@@ -504,6 +510,7 @@ class SatscanStatus(Screen):
 				print "cnt:", len(data), ", data:", data
 				if len(data) >= 10 and data[0] == "OK":
 					try:
+						transponder						= eDVBFrontendParametersSatellite()
 						transponder.orbital_position	= parent.position
 						transponder.polarisation		= parent.PolarisationToEnigma(parent.polarisation)
 						transponder.frequency			= int(data[2])
