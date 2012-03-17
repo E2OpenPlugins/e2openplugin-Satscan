@@ -540,7 +540,7 @@ class SatscanStatus(Screen):
 						xml_transponder["freq"]			= round(int(data[2]) / 1000) * 1000
 						xml_transponder["sr"]			= round(int(data[3]) / 1000) * 1000
 						xml_transponder["pol"]			= parent.PolarisationToEnigma(parent.polarisation)
-						xml_transponder["fec"]			= enigma_fec[data[7]]
+						xml_transponder["fec"]			= enigma_fec[data[7]] + 1
 						xml_transponder["system"]		= enigma_system[data[4]]
 						xml_transponder["mod"]			= enigma_modulation[data[8]]
 						parent.xml_transponders.append(xml_transponder)
