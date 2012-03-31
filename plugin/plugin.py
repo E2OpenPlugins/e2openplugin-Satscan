@@ -21,6 +21,7 @@ from Tools.Directories import resolveFilename, SCOPE_DEFAULTPARTITIONMOUNTDIR, S
 from enigma import eTimer, eDVBFrontendParametersSatellite, eComponentScan, eDVBSatelliteEquipmentControl, eDVBFrontendParametersTerrestrial, eDVBFrontendParametersCable, eConsoleAppContainer, eDVBResourceManager, getDesktop
 
 import time
+import subprocess
 
 class Satscan(ConfigListScreen, Screen):
 	skin = 	"""
@@ -59,12 +60,9 @@ class Satscan(ConfigListScreen, Screen):
 		return(frontend)
 
 	def GetI2CBusFromSlot(self, slot_number):
-		##self.i2c_mapping_table = {0:2, 1:3, 2:1, 3:0}
 		self.i2c_mapping_table = [2, 3, 1, 0]
 
 		i2cbus = nimmanager.getI2CDevice(slot_number)
-
-		#print "*** GetI2CBusFromSlot(1), i2cbus = ", i2cbus
 
 		if i2cbus is not None and i2cbus >= 0:
 			return i2cbus
@@ -74,8 +72,6 @@ class Satscan(ConfigListScreen, Screen):
 			i2cbus = self.i2c_mapping_table[slot_number]
 		else:
 			i2cbus = -1
-
-		#print "*** GetI2CBusFromSlot(2), i2cbus = ", i2cbus
 
 		return i2cbus
 
@@ -94,7 +90,28 @@ class Satscan(ConfigListScreen, Screen):
 	def __init__(self, session): 
 		Screen.__init__(self, session)
 
-		self.logfile				= open("/tmp/satscan.log", "w+", 0)
+		self.logfile			= open("/tmp/satscan.log", "w+", 0)
+		self.executable			= None
+
+		self.executable = None
+
+		for tryname in ("avl_xtrend_blindscan", "vuplus_blindscan"):
+			print "try:", tryname
+
+			try:
+				subprocess.check_call((tryname))
+				self.executable = tryname
+				break
+			except OSError:
+				print tryname + ": OSError"
+				None
+			except subprocess.CalledProcessError:
+				# vuplus_blindscan returns -1 when called with no arguments
+				print tryname + ": CalledProcessError"
+				self.executable = tryname
+				break
+
+		print "executable = ", self.executable
 
 		self.scan_circular		= ConfigYesNo(default = False)
 		self.scan_transponders	= ConfigYesNo(default = False)
@@ -122,7 +139,7 @@ class Satscan(ConfigListScreen, Screen):
 			if feinfo is not None:
 				fedata = feinfo.getAll(True)
 				if fedata.get("tuner_type", "UNKNOWN") == "DVB-S":
-					self.current_orb_pos  = fedata.get("orbital_position", 0);
+					self.current_orb_pos = fedata.get("orbital_position", 0);
 
 		selectable_nims = []
 		for nim in nimmanager.nim_slots:
@@ -438,8 +455,8 @@ class SatscanStatus(Screen):
 
 		parent.tuner.tune((parent.LOFToFreq(parent.lof), 0, parent.PolarisationToEnigma(parent.polarisation), 0, 0, parent.position, eDVBFrontendParametersSatellite.System_DVB_S, 0, 0, 0))
 
-		cmdpre		= 'echo "wait (5 seconds)" && sleep 5 && echo start scanning && '
-		cmdbinary	= 'vuplus_blindscan %d %d %d %d %d %d %d %s' % (950, 2150, 2, 45, parent.polarisation, parent.lof, int(parent.select_nim.value), parent.i2cbus)
+		cmdpre		= 'echo "wait (2 seconds)" && sleep 2 && echo start scanning && '
+		cmdbinary	= self.parent.executable + ' %d %d %d %d %d %d %d %s' % (950, 2150, 2, 45, parent.polarisation, parent.lof, int(parent.select_nim.value), parent.i2cbus)
 		cmdpost		= ' && echo finished'
 		cmd			= ''
 
