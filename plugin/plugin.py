@@ -95,7 +95,7 @@ class Satscan(ConfigListScreen, Screen):
 
 		self.executable = None
 
-		for tryname in ("avl_xtrend_blindscan", "vuplus_blindscan"):
+		for tryname in ("avl_azbox_blindscan", "avl_xtrend_blindscan", "vuplus_blindscan"):
 			print "try:", tryname
 
 			try:
