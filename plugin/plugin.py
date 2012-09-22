@@ -91,8 +91,7 @@ class Satscan(ConfigListScreen, Screen):
 
 		self.logfile			= open("/tmp/satscan.log", "w+", 0)
 		self.executable			= None
-
-		self.executable = None
+		self.vuplus_quirks		= False
 
 		for tryname in ("avl_azbox_blindscan", "avl_xtrend_blindscan", "vuplus_blindscan"):
 			print "try:", tryname
@@ -111,6 +110,9 @@ class Satscan(ConfigListScreen, Screen):
 				break
 
 		print "executable = ", self.executable
+
+		if self.executable == "vuplus_blindscan":
+			self.vuplus_quirks = True
 
 		self.scan_circular		= ConfigYesNo(default = False)
 		self.scan_transponders	= ConfigYesNo(default = False)
@@ -174,7 +176,13 @@ class Satscan(ConfigListScreen, Screen):
 
 			self["key_red"]		= StaticText(_("Exit"))
 			self["key_green"]	= StaticText(_("Start"))
-			self["text"]		= Label(_("Press OK to start scanning"))
+
+			if self.vuplus_quirks:
+				disclaimer = _("WARNING! Blindscan may make the tuner malfunction on a VU+ receiver. A reboot afterwards may be required to return to proper tuner function.\n\n")
+			else:
+				disclaimer = ""
+
+			self["text"] = Label(disclaimer + _("Press OK to start scanning"))
 
 			self.FillConfigList()
 		else:
@@ -527,6 +535,11 @@ class SatscanStatus(Screen):
 
 				if len(data) >= 10 and data[0] == "OK":
 					try:
+						if parent.vuplus_quirks and data[7] == "FEC_3_4":
+							fec = "FEC_AUTO"
+						else:
+							fec = data[7]
+
 						transponder						= eDVBFrontendParametersSatellite()
 						transponder.orbital_position	= parent.position
 						transponder.polarisation		= parent.PolarisationToEnigma(parent.polarisation)
@@ -535,7 +548,7 @@ class SatscanStatus(Screen):
 						transponder.system				= enigma_system[data[4]]
 						transponder.inversion			= enigma_inversion[data[5]]
 						transponder.pilot				= enigma_pilot[data[6]]
-						transponder.fec					= enigma_fec[data[7]]
+						transponder.fec					= enigma_fec[fec]
 						transponder.modulation			= enigma_modulation[data[8]]
 						transponder.rolloff				= enigma_rollof[data[9]]
 						parent.enigma_transponders.append(transponder)
@@ -547,7 +560,7 @@ class SatscanStatus(Screen):
 						raw_transponder["system"]		= data[4]
 						raw_transponder["mod"]			= data[8]
 						raw_transponder["sr"]			= int(data[3])
-						raw_transponder["fec"]			= data[7]
+						raw_transponder["fec"]			= fec
 						raw_transponder["inv"]			= data[5]
 						raw_transponder["pilot"]		= data[6]
 						raw_transponder["rolloff"]		= data[9]
@@ -557,15 +570,15 @@ class SatscanStatus(Screen):
 						xml_transponder["freq"]			= round(int(data[2]) / 1000) * 1000
 						xml_transponder["sr"]			= round(int(data[3]) / 1000) * 1000
 						xml_transponder["pol"]			= parent.PolarisationToEnigma(parent.polarisation)
-						xml_transponder["fec"]			= enigma_fec[data[7]] + 1
+						xml_transponder["fec"]			= enigma_fec[fec] + 1
 						xml_transponder["system"]		= enigma_system[data[4]]
 						xml_transponder["mod"]			= enigma_modulation[data[8]]
 						parent.xml_transponders.append(xml_transponder)
 
 						message = "found: %d %s %s %s %d %s\n" % (int(data[2]) / 1000, \
 								parent.PolarisationToShortString(parent.polarisation), data[4], \
-								data[8], int(data[3]) / 1000, data[7])
-						
+								data[8], int(data[3]) / 1000, fec)
+
 					except:
 						message = "invalid data: " + line + "\n"
 						pass
