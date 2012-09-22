@@ -23,15 +23,16 @@ import subprocess
 
 class Satscan(ConfigListScreen, Screen):
 	skin = 	"""
-		<screen position="center,center" size="500,390" title="Satscan">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="150,0" size="140,40" alphatest="on" />
+		<screen position="center,center" size="500,320" title="Satscan">
+			<widget name="config"	position="0,0"		font="Regular;20" size="500,150" scrollbarMode="showOnDemand" />
+			<widget name="text"		position="0,158"	font="Regular;20" size="500,120" halign="center" />
 
-			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" foregroundColor="#ffffff" transparent="1"/>
-			<widget source="key_green" render="Label" position="150,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" foregroundColor="#ffffff" transparent="1"/>
+			<ePixmap pixmap="skin_default/buttons/red.png" position="0,278" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="150,278" size="140,40" alphatest="on" />
 
-			<widget name="config"	position="0,56"		font="Regular;20" size="500,150" scrollbarMode="showOnDemand" />
-			<widget name="text"		position="0,214"	font="Regular;20" size="500,24"	 halign="center" />
+			<widget source="key_red" render="Label" position="0,278" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" foregroundColor="#ffffff" transparent="1"/>
+			<widget source="key_green" render="Label" position="150,278" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" foregroundColor="#ffffff" transparent="1"/>
+
 		</screen>
 		"""
 
