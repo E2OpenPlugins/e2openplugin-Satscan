@@ -85,7 +85,7 @@ class Satscan(ConfigListScreen, Screen):
 			current = current + 1
 		return -1
 
-	def __init__(self, session): 
+	def __init__(self, session):
 		Screen.__init__(self, session)
 
 		self.logfile			= open("/tmp/satscan.log", "w+", 0)
@@ -196,10 +196,10 @@ class Satscan(ConfigListScreen, Screen):
 
 		self.tunerEntry = getConfigListEntry(_("Tuner"), self.select_nim)
 		self.config_list.append(self.tunerEntry)
-		
+
 		if self.select_nim == [ ]:
 			return
-		
+
 		nim = nimmanager.nim_slots[index_to_scan]
 
 		if not nim.isCompatible("DVB-S"):
@@ -214,7 +214,7 @@ class Satscan(ConfigListScreen, Screen):
 		self["config"].l.setList(self.config_list)
 
 		self.scan_transponders.setValue(True)
-			
+
 	def UpdateConfigListPositions(self):
 		cur = self["config"].getCurrent()
 		if cur == self.tunerEntry:
@@ -227,7 +227,7 @@ class Satscan(ConfigListScreen, Screen):
 	def keyRight(self):
 		ConfigListScreen.keyRight(self)
 		self.UpdateConfigListPositions()
-			
+
 	def keyCancel(self):
 		self.session.nav.playService(self.current_service)
 		for x in self["config"].list:
@@ -523,6 +523,7 @@ class SatscanStatus(Screen):
 			if line.startswith("OK"):
 				data = line.split()
 				print "cnt:", len(data), ", data:", data
+
 				if len(data) >= 10 and data[0] == "OK":
 					try:
 						transponder						= eDVBFrontendParametersSatellite()
