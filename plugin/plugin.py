@@ -27,8 +27,8 @@ class Satscan(ConfigListScreen, Screen):
 			<widget name="config"	position="0,0"		font="Regular;20" size="500,150" scrollbarMode="showOnDemand" />
 			<widget name="text"		position="0,158"	font="Regular;20" size="500,120" halign="center" />
 
-			<ePixmap pixmap="buttons/red.png" position="0,278" size="140,40" alphatest="on" />
-			<ePixmap pixmap="buttons/green.png" position="150,278" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/red.png" position="0,278" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="150,278" size="140,40" alphatest="on" />
 
 			<widget source="key_red" render="Label" position="0,278" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" foregroundColor="#ffffff" transparent="1"/>
 			<widget source="key_green" render="Label" position="150,278" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" foregroundColor="#ffffff" transparent="1"/>
@@ -419,9 +419,9 @@ class Satscan(ConfigListScreen, Screen):
 class SatscanStatus(Screen):
 	skin = """
 		<screen position="center,center" size="500,390" title="Satscan progress">
-			<widget name="frontend" pixmap="icons/scan-s.png" position="0,0" size="64,64" transparent="1" alphatest="on" />
+			<widget name="frontend" pixmap="skin_default/icons/scan-s.png" position="0,0" size="64,64" transparent="1" alphatest="on" />
 			<widget name="scan_state" position="82,0" zPosition="2" size="414,66" font="Regular;18" />
-			<widget name="scan_progress" position="0,74" size="500,15" pixmap="progress_big.png" />
+			<widget name="scan_progress" position="0,74" size="500,15" pixmap="skin_default/progress_big.png" />
 			<widget name="info" position="0,100" size="500,400" font="Regular;18" scrollbarMode="showOnDemand" />
 		</screen>"""
 
