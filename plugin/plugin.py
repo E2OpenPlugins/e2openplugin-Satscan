@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Plugins.Plugin import PluginDescriptor
 
 from Screens.Screen import Screen
@@ -46,16 +47,16 @@ class Satscan(ConfigListScreen, Screen):
 		frontend = None
 		resource_manager = eDVBResourceManager.getInstance()
 		if resource_manager is None:
-			print "get resource manager instance failed"
+			print("get resource manager instance failed")
 		else:
 			self.raw_channel = resource_manager.allocateRawChannel(int(self.select_nim.value))
 
 			if self.raw_channel is None:
-				print "allocateRawChannel failed"
+				print("allocateRawChannel failed")
 			else:
 				frontend = self.raw_channel.getFrontend()
 				if frontend is None:
-					print "getFrontend failed"
+					print("getFrontend failed")
 		return(frontend)
 
 	def GetI2CBusFromSlot(self, slot_number):
@@ -94,22 +95,22 @@ class Satscan(ConfigListScreen, Screen):
 		self.vuplus_quirks		= False
 
 		for tryname in ("avl_azbox_blindscan", "avl_xtrend_blindscan", "vuplus_blindscan"):
-			print "try:", tryname
+			print("try:", tryname)
 
 			try:
 				subprocess.check_call((tryname))
 				self.executable = tryname
 				break
 			except OSError:
-				print tryname + ": OSError"
+				print(tryname + ": OSError")
 				None
 			except subprocess.CalledProcessError:
 				# vuplus_blindscan returns -1 when called with no arguments
-				print tryname + ": CalledProcessError"
+				print(tryname + ": CalledProcessError")
 				self.executable = tryname
 				break
 
-		print "executable = ", self.executable
+		print("executable = ", self.executable)
 
 		if self.executable == "vuplus_blindscan":
 			self.vuplus_quirks = True
@@ -328,13 +329,13 @@ class Satscan(ConfigListScreen, Screen):
 			self.session.nav.stopService()
 			self.frontend = self.OpenFrontend()
 		if self.frontend is None:
-			print "*** cannot open frontend"
+			print("*** cannot open frontend")
 			return
 
 		self.i2cbus = self.GetI2CBusFromSlot(int(self.select_nim.value))
 
 		if self.i2cbus < 0:
-			print "*** Can't find i2c bus for this nim"
+			print("*** Can't find i2c bus for this nim")
 			return
 
 		#print "*** selected_nim =", selected_nim
@@ -407,12 +408,12 @@ class Satscan(ConfigListScreen, Screen):
 		if self.scan_fta.value:
 			flags |= eComponentScan.scanOnlyFree
 
-		print "*** scanning transponders:"
+		print("*** scanning transponders:")
 
 		for transponder in self.enigma_transponders:
-			print "-->", transponder.orbital_position, transponder.polarisation, transponder.frequency, \
+			print("-->", transponder.orbital_position, transponder.polarisation, transponder.frequency, \
 					transponder.symbol_rate, transponder.system, transponder.inversion, transponder.pilot, transponder.pilot, \
-					transponder.fec, transponder.modulation, transponder.rolloff
+					transponder.fec, transponder.modulation, transponder.rolloff)
 
 		self.session.open(ServiceScan, [{"transponders": self.enigma_transponders, "feid": int(self.select_nim.value), "flags": flags}])
 
@@ -475,7 +476,7 @@ class SatscanStatus(Screen):
 		if (parent.polarisation == parent.PolarisationLast()) and (parent.lof == parent.LOFLast()):
 			cmd = cmd + cmdpost
 
-		print 'prepared command: "%s"' % (cmd)
+		print('prepared command: "%s"' % (cmd))
 
 		parent.app_container = eConsoleAppContainer()
 		parent.app_container.appClosed.append(self.StatusAppContainerClose)
@@ -531,7 +532,7 @@ class SatscanStatus(Screen):
 
 			if line.startswith("OK"):
 				data = line.split()
-				print "cnt:", len(data), ", data:", data
+				print("cnt:", len(data), ", data:", data)
 
 				if len(data) >= 10 and data[0] == "OK":
 					try:
