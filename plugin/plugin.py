@@ -114,10 +114,10 @@ class Satscan(ConfigListScreen, Screen):
 		if self.executable == "vuplus_blindscan":
 			self.vuplus_quirks = True
 
-		self.scan_circular		= ConfigYesNo(default = False)
-		self.scan_transponders	= ConfigYesNo(default = False)
-		self.scan_clearservices	= ConfigYesNo(default = False)
-		self.scan_fta			= ConfigYesNo(default = False)
+		self.scan_circular		= ConfigYesNo(default=False)
+		self.scan_transponders	= ConfigYesNo(default=False)
+		self.scan_clearservices	= ConfigYesNo(default=False)
+		self.scan_fta			= ConfigYesNo(default=False)
 
 		self.current_service		= self.session.nav.getCurrentlyPlayingServiceReference()
 		self.all_pos_per_dvbs_nim	= []
@@ -155,7 +155,7 @@ class Satscan(ConfigListScreen, Screen):
 			if nim.isCompatible("DVB-S"):
 				selectable_nims.append((str(nim.slot), nim.friendly_full_description))
 
-		self.select_nim = ConfigSelection(choices = selectable_nims)
+		self.select_nim = ConfigSelection(choices=selectable_nims)
 
 		self.positions_config_list = []
 		for nim_slot in nimmanager.nim_slots:
@@ -623,5 +623,5 @@ def SatscanPluginSetup(menuid, **kwargs):
 		return []
 
 def Plugins(path, **kwargs):
-	plugin_list = [PluginDescriptor(name=_("Satscan"), where = PluginDescriptor.WHERE_MENU, needsRestart = False, fnc = SatscanPluginSetup)]
+	plugin_list = [PluginDescriptor(name=_("Satscan"), where=PluginDescriptor.WHERE_MENU, needsRestart=False, fnc=SatscanPluginSetup)]
 	return plugin_list
