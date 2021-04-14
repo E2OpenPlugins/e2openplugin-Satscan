@@ -21,6 +21,7 @@ from enigma import eTimer, eDVBFrontendParametersSatellite, eComponentScan, eDVB
 import time
 import subprocess
 
+
 class Satscan(ConfigListScreen, Screen):
 	skin = """
 		<screen position="center,center" size="500,320" title="Satscan">
@@ -416,6 +417,7 @@ class Satscan(ConfigListScreen, Screen):
 
 		self.session.open(ServiceScan, [{"transponders": self.enigma_transponders, "feid": int(self.select_nim.value), "flags": flags}])
 
+
 class SatscanStatus(Screen):
 	skin = """
 		<screen position="center,center" size="500,390" title="Satscan progress">
@@ -613,14 +615,17 @@ class SatscanStatus(Screen):
 		else:
 			self.close()
 
+
 def main(session, **kwargs):
 	session.open(Satscan)
+
 
 def SatscanPluginSetup(menuid, **kwargs):
 	if menuid == "scan":
 		return [(_("Satscan"), main, "satscan", 25)]
 	else:
 		return []
+
 
 def Plugins(path, **kwargs):
 	plugin_list = [PluginDescriptor(name=_("Satscan"), where=PluginDescriptor.WHERE_MENU, needsRestart=False, fnc=SatscanPluginSetup)]
