@@ -140,7 +140,7 @@ class Satscan(ConfigListScreen, Screen):
 			if feinfo is not None:
 				fedata = feinfo.getAll(True)
 				if fedata.get("tuner_type", "UNKNOWN") == "DVB-S":
-					self.current_orb_pos = fedata.get("orbital_position", 0);
+					self.current_orb_pos = fedata.get("orbital_position", 0)
 
 		selectable_nims = []
 		for nim in nimmanager.nim_slots:
@@ -366,7 +366,7 @@ class Satscan(ConfigListScreen, Screen):
 
 		datafile = open("/tmp/satscan.data", "w+")
 		for transponder in sorted_transponders:
-			datafile.write("%s %d %s %s %s %d %s %s %s %s\n" \
+			datafile.write("%s %d %s %s %s %d %s %s %s %s\n"
 					% (transponder["pos"], transponder["freq"], transponder["pol"], transponder["system"], transponder["mod"],
 					transponder["sr"], transponder["fec"], transponder["inv"], transponder["pilot"], transponder["rolloff"]))
 		datafile.close()
@@ -379,7 +379,7 @@ class Satscan(ConfigListScreen, Screen):
 		xmlfile.write('<satellites>\n')
 		xmlfile.write('    <sat name="%s" flags="0" position="%d">\n' % (self.position_name, self.PositionToInt(self.position)))
 		for transponder in sorted_transponders:
-			xmlfile.write('        <transponder frequency="%d" symbol_rate="%d" polarization="%d" fec_inner="%d" system="%d" modulation="%d" />\n' \
+			xmlfile.write('        <transponder frequency="%d" symbol_rate="%d" polarization="%d" fec_inner="%d" system="%d" modulation="%d" />\n'
 					% (transponder["freq"], transponder["sr"], transponder["pol"], transponder["fec"], transponder["system"], transponder["mod"]))
 		xmlfile.write('    </sat>\n')
 		xmlfile.write('</satellites\n')
@@ -451,8 +451,8 @@ class SatscanStatus(Screen):
 		parent = self.parent
 
 		status = "Position: %s\nPolarisation: %s\nBand: %s\n" % \
-				 (parent.PositionToString(parent.position), \
-				  parent.PolarisationToString(parent.polarisation), \
+				 (parent.PositionToString(parent.position),
+				  parent.PolarisationToString(parent.polarisation),
 				  parent.LOFToString(parent.lof))
 
 		self["scan_state"].setText(status)
@@ -575,8 +575,8 @@ class SatscanStatus(Screen):
 						xml_transponder["mod"]			= enigma_modulation[data[8]]
 						parent.xml_transponders.append(xml_transponder)
 
-						message = "found: %d %s %s %s %d %s\n" % (int(data[2]) / 1000, \
-								parent.PolarisationToShortString(parent.polarisation), data[4], \
+						message = "found: %d %s %s %s %d %s\n" % (int(data[2]) / 1000,
+								parent.PolarisationToShortString(parent.polarisation), data[4],
 								data[8], int(data[3]) / 1000, fec)
 
 					except:
