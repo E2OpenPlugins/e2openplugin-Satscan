@@ -21,8 +21,9 @@ from enigma import eTimer, eDVBFrontendParametersSatellite, eComponentScan, eDVB
 import time
 import subprocess
 
+
 class Satscan(ConfigListScreen, Screen):
-	skin = 	"""
+	skin = """
 		<screen position="center,center" size="500,320" title="Satscan">
 			<widget name="config"	position="0,0"		font="Regular;20" size="500,150" scrollbarMode="showOnDemand" />
 			<widget name="text"		position="0,158"	font="Regular;20" size="500,120" halign="center" />
@@ -75,8 +76,8 @@ class Satscan(ConfigListScreen, Screen):
 		return i2cbus
 
 	def SelectedNimToList(self, selected):
-		current		= 0
-		disabled	= 0
+		current = 0
+		disabled = 0
 
 		for all_dvbs_pos in self.all_pos_per_dvbs_nim:
 			if self.all_pos_per_dvbs_nim[current] == None:
@@ -89,9 +90,9 @@ class Satscan(ConfigListScreen, Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 
-		self.logfile			= open("/tmp/satscan.log", "w+", 0)
-		self.executable			= None
-		self.vuplus_quirks		= False
+		self.logfile = open("/tmp/satscan.log", "w+", 0)
+		self.executable = None
+		self.vuplus_quirks = False
 
 		for tryname in ("avl_azbox_blindscan", "avl_xtrend_blindscan", "vuplus_blindscan"):
 			print "try:", tryname
@@ -114,13 +115,13 @@ class Satscan(ConfigListScreen, Screen):
 		if self.executable == "vuplus_blindscan":
 			self.vuplus_quirks = True
 
-		self.scan_circular		= ConfigYesNo(default = False)
-		self.scan_transponders	= ConfigYesNo(default = False)
-		self.scan_clearservices	= ConfigYesNo(default = False)
-		self.scan_fta			= ConfigYesNo(default = False)
+		self.scan_circular = ConfigYesNo(default=False)
+		self.scan_transponders = ConfigYesNo(default=False)
+		self.scan_clearservices = ConfigYesNo(default=False)
+		self.scan_fta = ConfigYesNo(default=False)
 
-		self.current_service		= self.session.nav.getCurrentlyPlayingServiceReference()
-		self.all_pos_per_dvbs_nim	= []
+		self.current_service = self.session.nav.getCurrentlyPlayingServiceReference()
+		self.all_pos_per_dvbs_nim = []
 
 		nimmanager.enumerateNIMs()
 
@@ -140,7 +141,7 @@ class Satscan(ConfigListScreen, Screen):
 			if feinfo is not None:
 				fedata = feinfo.getAll(True)
 				if fedata.get("tuner_type", "UNKNOWN") == "DVB-S":
-					self.current_orb_pos = fedata.get("orbital_position", 0);
+					self.current_orb_pos = fedata.get("orbital_position", 0)
 
 		selectable_nims = []
 		for nim in nimmanager.nim_slots:
@@ -155,7 +156,7 @@ class Satscan(ConfigListScreen, Screen):
 			if nim.isCompatible("DVB-S"):
 				selectable_nims.append((str(nim.slot), nim.friendly_full_description))
 
-		self.select_nim = ConfigSelection(choices = selectable_nims)
+		self.select_nim = ConfigSelection(choices=selectable_nims)
 
 		self.positions_config_list = []
 		for nim_slot in nimmanager.nim_slots:
@@ -165,17 +166,17 @@ class Satscan(ConfigListScreen, Screen):
 		self.config_list = []
 		ConfigListScreen.__init__(self, self.config_list)
 
-		if self.select_nim.value != None and self.select_nim.value != "" :
-			self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "ColorActions" ],
+		if self.select_nim.value != None and self.select_nim.value != "":
+			self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "ColorActions"],
 			{
-				"red":		self.keyCancel,
-				"green":	self.keyGo,
-				"ok":		self.keyGo,
-				"cancel":	self.keyCancel,
+				"red": self.keyCancel,
+				"green": self.keyGo,
+				"ok": self.keyGo,
+				"cancel": self.keyCancel,
 			}, -2)
 
-			self["key_red"]		= StaticText(_("Exit"))
-			self["key_green"]	= StaticText(_("Start"))
+			self["key_red"] = StaticText(_("Exit"))
+			self["key_green"] = StaticText(_("Start"))
 
 			if self.vuplus_quirks:
 				disclaimer = _("WARNING! Blindscan may make the tuner malfunction on a VU+ receiver. A reboot afterwards may be required to return to proper tuner function.\n\n")
@@ -186,7 +187,7 @@ class Satscan(ConfigListScreen, Screen):
 
 			self.FillConfigList()
 		else:
-			self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "ColorActions" ],
+			self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "ColorActions"],
 			{
 				"red": self.keyCancel,
 				"green": self.KeyNone,
@@ -194,9 +195,9 @@ class Satscan(ConfigListScreen, Screen):
 				"cancel": self.keyCancel,
 			}, -2)
 
-			self["key_red"]		= StaticText(_("Exit"))
-			self["key_green"]	= StaticText(" ")
-			self["text"]		= Label(_("Tuner not set up, can't scan"))
+			self["key_red"] = StaticText(_("Exit"))
+			self["key_green"] = StaticText(" ")
+			self["text"] = Label(_("Tuner not set up, can't scan"))
 
 	def FillConfigList(self):
 		self.config_list = []
@@ -206,7 +207,7 @@ class Satscan(ConfigListScreen, Screen):
 		self.tunerEntry = getConfigListEntry(_("Tuner"), self.select_nim)
 		self.config_list.append(self.tunerEntry)
 
-		if self.select_nim == [ ]:
+		if self.select_nim == []:
 			return
 
 		nim = nimmanager.nim_slots[index_to_scan]
@@ -250,8 +251,8 @@ class Satscan(ConfigListScreen, Screen):
 		return 1
 
 	def PolarisationToEnigma(self, pol_id):
-		pol_tab_nc	= [ eDVBFrontendParametersSatellite.Polarisation_Horizontal, 	eDVBFrontendParametersSatellite.Polarisation_Vertical ]
-		pol_tab_c	= [ eDVBFrontendParametersSatellite.Polarisation_CircularLeft,	eDVBFrontendParametersSatellite.Polarisation_CircularRight ]
+		pol_tab_nc = [eDVBFrontendParametersSatellite.Polarisation_Horizontal, eDVBFrontendParametersSatellite.Polarisation_Vertical]
+		pol_tab_c = [eDVBFrontendParametersSatellite.Polarisation_CircularLeft, eDVBFrontendParametersSatellite.Polarisation_CircularRight]
 
 		if pol_id == 0 or pol_id == 1:
 			if self.scan_circular.value:
@@ -262,8 +263,8 @@ class Satscan(ConfigListScreen, Screen):
 			return -1
 
 	def PolarisationToString(self, pol_id):
-		pol_tab_nc	= [ "horizontal", 		"vertical" ]
-		pol_tab_c	= [ "circular left",	"circular right" ]
+		pol_tab_nc = ["horizontal", "vertical"]
+		pol_tab_c = ["circular left", "circular right"]
 
 		if pol_id == 0 or pol_id == 1:
 			if self.scan_circular.value:
@@ -274,8 +275,8 @@ class Satscan(ConfigListScreen, Screen):
 			return "unknown polarisation"
 
 	def PolarisationToShortString(self, pol_id):
-		pol_tab_nc	= [ "H", "V" ]
-		pol_tab_c	= [ "L", "R" ]
+		pol_tab_nc = ["H", "V"]
+		pol_tab_c = ["L", "R"]
 
 		if pol_id == 0 or pol_id == 1:
 			if self.scan_circular.value:
@@ -316,11 +317,11 @@ class Satscan(ConfigListScreen, Screen):
 		return pos - 3600
 
 	def keyGo(self):
-		selected_nim			= int(self.SelectedNimToList(self.select_nim.value))
-		selected_position		= self.positions_config_list[selected_nim].index
-		nim_positions_list		= [self.all_pos_per_dvbs_nim[int(self.select_nim.value)][selected_position]]
-		self.position			= nim_positions_list[0][0]
-		self.position_name		= nim_positions_list[0][1]
+		selected_nim = int(self.SelectedNimToList(self.select_nim.value))
+		selected_position = self.positions_config_list[selected_nim].index
+		nim_positions_list = [self.all_pos_per_dvbs_nim[int(self.select_nim.value)][selected_position]]
+		self.position = nim_positions_list[0][0]
+		self.position_name = nim_positions_list[0][1]
 
 		self.frontend = self.OpenFrontend()
 		if self.frontend is None:
@@ -345,11 +346,11 @@ class Satscan(ConfigListScreen, Screen):
 
 		self.tuner = Tuner(self.frontend)
 
-		self.polarisation			= self.PolarisationFirst()
-		self.lof					= self.LOFFirst()
-		self.enigma_transponders	= []
-		self.text_transponders		= []
-		self.xml_transponders		= []
+		self.polarisation = self.PolarisationFirst()
+		self.lof = self.LOFFirst()
+		self.enigma_transponders = []
+		self.text_transponders = []
+		self.xml_transponders = []
 
 		self.status_screen = self.session.openWithCallback(self.CallbackStatusScreenDone, SatscanStatus, self)
 
@@ -366,7 +367,7 @@ class Satscan(ConfigListScreen, Screen):
 
 		datafile = open("/tmp/satscan.data", "w+")
 		for transponder in sorted_transponders:
-			datafile.write("%s %d %s %s %s %d %s %s %s %s\n" \
+			datafile.write("%s %d %s %s %s %d %s %s %s %s\n"
 					% (transponder["pos"], transponder["freq"], transponder["pol"], transponder["system"], transponder["mod"],
 					transponder["sr"], transponder["fec"], transponder["inv"], transponder["pilot"], transponder["rolloff"]))
 		datafile.close()
@@ -379,7 +380,7 @@ class Satscan(ConfigListScreen, Screen):
 		xmlfile.write('<satellites>\n')
 		xmlfile.write('    <sat name="%s" flags="0" position="%d">\n' % (self.position_name, self.PositionToInt(self.position)))
 		for transponder in sorted_transponders:
-			xmlfile.write('        <transponder frequency="%d" symbol_rate="%d" polarization="%d" fec_inner="%d" system="%d" modulation="%d" />\n' \
+			xmlfile.write('        <transponder frequency="%d" symbol_rate="%d" polarization="%d" fec_inner="%d" system="%d" modulation="%d" />\n'
 					% (transponder["freq"], transponder["sr"], transponder["pol"], transponder["fec"], transponder["system"], transponder["mod"]))
 		xmlfile.write('    </sat>\n')
 		xmlfile.write('</satellites\n')
@@ -416,6 +417,7 @@ class Satscan(ConfigListScreen, Screen):
 
 		self.session.open(ServiceScan, [{"transponders": self.enigma_transponders, "feid": int(self.select_nim.value), "flags": flags}])
 
+
 class SatscanStatus(Screen):
 	skin = """
 		<screen position="center,center" size="500,390" title="Satscan progress">
@@ -428,19 +430,19 @@ class SatscanStatus(Screen):
 	def __init__(self, session, parent):
 		Screen.__init__(self, session)
 
-		self.parent				= parent
-		self["frontend"]		= Pixmap()
-		self["scan_state"]		= Label(_("scan state"))
-		self["scan_progress"]	= ProgressBar()
-		self["info"]			= Label()
+		self.parent = parent
+		self["frontend"] = Pixmap()
+		self["scan_state"] = Label(_("scan state"))
+		self["scan_progress"] = ProgressBar()
+		self["info"] = Label()
 
 		self["actions"] = ActionMap(["OkCancelActions"],
 		{
-			"cancel":	self.StatusOnCancel
+			"cancel": self.StatusOnCancel
 		})
 
-		self.log		= ""
-		self.progress	= 0
+		self.log = ""
+		self.progress = 0
 
 		self.onFirstExecBegin.append(self.StatusStartScanRound)
 
@@ -451,8 +453,8 @@ class SatscanStatus(Screen):
 		parent = self.parent
 
 		status = "Position: %s\nPolarisation: %s\nBand: %s\n" % \
-				 (parent.PositionToString(parent.position), \
-				  parent.PolarisationToString(parent.polarisation), \
+				 (parent.PositionToString(parent.position),
+				  parent.PolarisationToString(parent.polarisation),
 				  parent.LOFToString(parent.lof))
 
 		self["scan_state"].setText(status)
@@ -462,10 +464,10 @@ class SatscanStatus(Screen):
 
 		parent.tuner.tune((parent.LOFToFreq(parent.lof), 0, parent.PolarisationToEnigma(parent.polarisation), 0, 0, parent.position, eDVBFrontendParametersSatellite.System_DVB_S, 0, 0, 0))
 
-		cmdpre		= 'echo "wait (2 seconds)" && sleep 2 && echo start scanning && '
-		cmdbinary	= self.parent.executable + ' %d %d %d %d %d %d %d %s' % (950, 2150, 2, 45, parent.polarisation, parent.lof, int(parent.select_nim.value), parent.i2cbus)
-		cmdpost		= ' && echo finished'
-		cmd			= ''
+		cmdpre = 'echo "wait (2 seconds)" && sleep 2 && echo start scanning && '
+		cmdbinary = self.parent.executable + ' %d %d %d %d %d %d %d %s' % (950, 2150, 2, 45, parent.polarisation, parent.lof, int(parent.select_nim.value), parent.i2cbus)
+		cmdpost = ' && echo finished'
+		cmd = ''
 
 		if (parent.polarisation == parent.PolarisationFirst()) and (parent.lof == parent.LOFFirst()):
 			cmd = cmdpre + cmd
@@ -485,43 +487,43 @@ class SatscanStatus(Screen):
 	def StatusAppContainerDataAvail(self, str):
 
 		enigma_system = {
-			"DVB-S":	eDVBFrontendParametersSatellite.System_DVB_S,
-			"DVB-S2":	eDVBFrontendParametersSatellite.System_DVB_S2
+			"DVB-S": eDVBFrontendParametersSatellite.System_DVB_S,
+			"DVB-S2": eDVBFrontendParametersSatellite.System_DVB_S2
 		}
 
 		enigma_modulation = {
-			"QPSK":	eDVBFrontendParametersSatellite.Modulation_QPSK,
-			"8PSK":	eDVBFrontendParametersSatellite.Modulation_8PSK
+			"QPSK": eDVBFrontendParametersSatellite.Modulation_QPSK,
+			"8PSK": eDVBFrontendParametersSatellite.Modulation_8PSK
 		}
 
-		enigma_inversion =	{
-			"INVERSION_OFF":	eDVBFrontendParametersSatellite.Inversion_Off,
-			"INVERSION_ON":		eDVBFrontendParametersSatellite.Inversion_On,
-			"INVERSION_AUTO":	eDVBFrontendParametersSatellite.Inversion_Unknown
+		enigma_inversion = {
+			"INVERSION_OFF": eDVBFrontendParametersSatellite.Inversion_Off,
+			"INVERSION_ON": eDVBFrontendParametersSatellite.Inversion_On,
+			"INVERSION_AUTO": eDVBFrontendParametersSatellite.Inversion_Unknown
 		}
 
 		enigma_fec = {
-			"FEC_AUTO":	eDVBFrontendParametersSatellite.FEC_Auto,
-			"FEC_1_2":	eDVBFrontendParametersSatellite.FEC_1_2,
-			"FEC_2_3":	eDVBFrontendParametersSatellite.FEC_2_3,
-			"FEC_3_4":	eDVBFrontendParametersSatellite.FEC_3_4,
-			"FEC_5_6":	eDVBFrontendParametersSatellite.FEC_5_6,
-			"FEC_7_8":	eDVBFrontendParametersSatellite.FEC_7_8,
-			"FEC_8_9":	eDVBFrontendParametersSatellite.FEC_8_9,
-			"FEC_3_5":	eDVBFrontendParametersSatellite.FEC_3_5,
-			"FEC_9_10":	eDVBFrontendParametersSatellite.FEC_9_10,
-			"FEC_NONE":	eDVBFrontendParametersSatellite.FEC_None
+			"FEC_AUTO": eDVBFrontendParametersSatellite.FEC_Auto,
+			"FEC_1_2": eDVBFrontendParametersSatellite.FEC_1_2,
+			"FEC_2_3": eDVBFrontendParametersSatellite.FEC_2_3,
+			"FEC_3_4": eDVBFrontendParametersSatellite.FEC_3_4,
+			"FEC_5_6": eDVBFrontendParametersSatellite.FEC_5_6,
+			"FEC_7_8": eDVBFrontendParametersSatellite.FEC_7_8,
+			"FEC_8_9": eDVBFrontendParametersSatellite.FEC_8_9,
+			"FEC_3_5": eDVBFrontendParametersSatellite.FEC_3_5,
+			"FEC_9_10": eDVBFrontendParametersSatellite.FEC_9_10,
+			"FEC_NONE": eDVBFrontendParametersSatellite.FEC_None
 		}
 
 		enigma_rollof = {
-			"ROLLOFF_20":	eDVBFrontendParametersSatellite.RollOff_alpha_0_20,
-			"ROLLOFF_25":	eDVBFrontendParametersSatellite.RollOff_alpha_0_25,
-			"ROLLOFF_35":	eDVBFrontendParametersSatellite.RollOff_alpha_0_35
+			"ROLLOFF_20": eDVBFrontendParametersSatellite.RollOff_alpha_0_20,
+			"ROLLOFF_25": eDVBFrontendParametersSatellite.RollOff_alpha_0_25,
+			"ROLLOFF_35": eDVBFrontendParametersSatellite.RollOff_alpha_0_35
 		}
 
 		enigma_pilot = {
-			"PILOT_ON":		eDVBFrontendParametersSatellite.Pilot_On,
-			"PILOT_OFF":	eDVBFrontendParametersSatellite.Pilot_Off
+			"PILOT_ON": eDVBFrontendParametersSatellite.Pilot_On,
+			"PILOT_OFF": eDVBFrontendParametersSatellite.Pilot_Off
 		}
 
 		parent = self.parent
@@ -540,43 +542,43 @@ class SatscanStatus(Screen):
 						else:
 							fec = data[7]
 
-						transponder						= eDVBFrontendParametersSatellite()
-						transponder.orbital_position	= parent.position
-						transponder.polarisation		= parent.PolarisationToEnigma(parent.polarisation)
-						transponder.frequency			= int(data[2])
-						transponder.symbol_rate			= int(data[3])
-						transponder.system				= enigma_system[data[4]]
-						transponder.inversion			= enigma_inversion[data[5]]
-						transponder.pilot				= enigma_pilot[data[6]]
-						transponder.fec					= enigma_fec[fec]
-						transponder.modulation			= enigma_modulation[data[8]]
-						transponder.rolloff				= enigma_rollof[data[9]]
+						transponder = eDVBFrontendParametersSatellite()
+						transponder.orbital_position = parent.position
+						transponder.polarisation = parent.PolarisationToEnigma(parent.polarisation)
+						transponder.frequency = int(data[2])
+						transponder.symbol_rate = int(data[3])
+						transponder.system = enigma_system[data[4]]
+						transponder.inversion = enigma_inversion[data[5]]
+						transponder.pilot = enigma_pilot[data[6]]
+						transponder.fec = enigma_fec[fec]
+						transponder.modulation = enigma_modulation[data[8]]
+						transponder.rolloff = enigma_rollof[data[9]]
 						parent.enigma_transponders.append(transponder)
 
-						raw_transponder					= {}
-						raw_transponder["pos"]			= parent.PositionToString(parent.position)
-						raw_transponder["freq"]			= int(data[2])
-						raw_transponder["pol"]			= parent.PolarisationToString(parent.polarisation)
-						raw_transponder["system"]		= data[4]
-						raw_transponder["mod"]			= data[8]
-						raw_transponder["sr"]			= int(data[3])
-						raw_transponder["fec"]			= fec
-						raw_transponder["inv"]			= data[5]
-						raw_transponder["pilot"]		= data[6]
-						raw_transponder["rolloff"]		= data[9]
+						raw_transponder = {}
+						raw_transponder["pos"] = parent.PositionToString(parent.position)
+						raw_transponder["freq"] = int(data[2])
+						raw_transponder["pol"] = parent.PolarisationToString(parent.polarisation)
+						raw_transponder["system"] = data[4]
+						raw_transponder["mod"] = data[8]
+						raw_transponder["sr"] = int(data[3])
+						raw_transponder["fec"] = fec
+						raw_transponder["inv"] = data[5]
+						raw_transponder["pilot"] = data[6]
+						raw_transponder["rolloff"] = data[9]
 						parent.text_transponders.append(raw_transponder)
 
-						xml_transponder					= {}
-						xml_transponder["freq"]			= round(int(data[2]) / 1000) * 1000
-						xml_transponder["sr"]			= round(int(data[3]) / 1000) * 1000
-						xml_transponder["pol"]			= parent.PolarisationToEnigma(parent.polarisation)
-						xml_transponder["fec"]			= enigma_fec[fec] + 1
-						xml_transponder["system"]		= enigma_system[data[4]]
-						xml_transponder["mod"]			= enigma_modulation[data[8]]
+						xml_transponder = {}
+						xml_transponder["freq"] = round(int(data[2]) / 1000) * 1000
+						xml_transponder["sr"] = round(int(data[3]) / 1000) * 1000
+						xml_transponder["pol"] = parent.PolarisationToEnigma(parent.polarisation)
+						xml_transponder["fec"] = enigma_fec[fec] + 1
+						xml_transponder["system"] = enigma_system[data[4]]
+						xml_transponder["mod"] = enigma_modulation[data[8]]
 						parent.xml_transponders.append(xml_transponder)
 
-						message = "found: %d %s %s %s %d %s\n" % (int(data[2]) / 1000, \
-								parent.PolarisationToShortString(parent.polarisation), data[4], \
+						message = "found: %d %s %s %s %d %s\n" % (int(data[2]) / 1000,
+								parent.PolarisationToShortString(parent.polarisation), data[4],
 								data[8], int(data[3]) / 1000, fec)
 
 					except:
@@ -605,16 +607,18 @@ class SatscanStatus(Screen):
 		parent.polarisation = parent.polarisation + 1
 
 		if parent.polarisation > parent.PolarisationLast():
-			parent.polarisation	= parent.PolarisationFirst()
-			parent.lof			= parent.lof + 1
+			parent.polarisation = parent.PolarisationFirst()
+			parent.lof = parent.lof + 1
 
 		if parent.polarisation <= parent.PolarisationLast() and parent.lof <= parent.LOFLast():
 			self.StatusStartScanRound()
 		else:
 			self.close()
 
+
 def main(session, **kwargs):
 	session.open(Satscan)
+
 
 def SatscanPluginSetup(menuid, **kwargs):
 	if menuid == "scan":
@@ -622,6 +626,7 @@ def SatscanPluginSetup(menuid, **kwargs):
 	else:
 		return []
 
+
 def Plugins(path, **kwargs):
-	plugin_list = [PluginDescriptor(name=_("Satscan"), where = PluginDescriptor.WHERE_MENU, needsRestart = False, fnc = SatscanPluginSetup)]
+	plugin_list = [PluginDescriptor(name=_("Satscan"), where=PluginDescriptor.WHERE_MENU, needsRestart=False, fnc=SatscanPluginSetup)]
 	return plugin_list
