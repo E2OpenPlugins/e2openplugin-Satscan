@@ -165,8 +165,8 @@ class Satscan(ConfigListScreen, Screen):
 		self.config_list = []
 		ConfigListScreen.__init__(self, self.config_list)
 
-		if self.select_nim.value != None and self.select_nim.value != "" :
-			self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "ColorActions" ],
+		if self.select_nim.value != None and self.select_nim.value != "":
+			self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "ColorActions"],
 			{
 				"red":		self.keyCancel,
 				"green":	self.keyGo,
@@ -186,7 +186,7 @@ class Satscan(ConfigListScreen, Screen):
 
 			self.FillConfigList()
 		else:
-			self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "ColorActions" ],
+			self["actions"] = ActionMap(["OkCancelActions", "ShortcutActions", "ColorActions"],
 			{
 				"red": self.keyCancel,
 				"green": self.KeyNone,
@@ -206,7 +206,7 @@ class Satscan(ConfigListScreen, Screen):
 		self.tunerEntry = getConfigListEntry(_("Tuner"), self.select_nim)
 		self.config_list.append(self.tunerEntry)
 
-		if self.select_nim == [ ]:
+		if self.select_nim == []:
 			return
 
 		nim = nimmanager.nim_slots[index_to_scan]
@@ -250,8 +250,8 @@ class Satscan(ConfigListScreen, Screen):
 		return 1
 
 	def PolarisationToEnigma(self, pol_id):
-		pol_tab_nc	= [ eDVBFrontendParametersSatellite.Polarisation_Horizontal, 	eDVBFrontendParametersSatellite.Polarisation_Vertical ]
-		pol_tab_c	= [ eDVBFrontendParametersSatellite.Polarisation_CircularLeft,	eDVBFrontendParametersSatellite.Polarisation_CircularRight ]
+		pol_tab_nc	= [eDVBFrontendParametersSatellite.Polarisation_Horizontal, 	eDVBFrontendParametersSatellite.Polarisation_Vertical]
+		pol_tab_c	= [eDVBFrontendParametersSatellite.Polarisation_CircularLeft,	eDVBFrontendParametersSatellite.Polarisation_CircularRight]
 
 		if pol_id == 0 or pol_id == 1:
 			if self.scan_circular.value:
@@ -262,8 +262,8 @@ class Satscan(ConfigListScreen, Screen):
 			return -1
 
 	def PolarisationToString(self, pol_id):
-		pol_tab_nc	= [ "horizontal", 		"vertical" ]
-		pol_tab_c	= [ "circular left",	"circular right" ]
+		pol_tab_nc	= ["horizontal", 		"vertical"]
+		pol_tab_c	= ["circular left",	"circular right"]
 
 		if pol_id == 0 or pol_id == 1:
 			if self.scan_circular.value:
@@ -274,8 +274,8 @@ class Satscan(ConfigListScreen, Screen):
 			return "unknown polarisation"
 
 	def PolarisationToShortString(self, pol_id):
-		pol_tab_nc	= [ "H", "V" ]
-		pol_tab_c	= [ "L", "R" ]
+		pol_tab_nc	= ["H", "V"]
+		pol_tab_c	= ["L", "R"]
 
 		if pol_id == 0 or pol_id == 1:
 			if self.scan_circular.value:
